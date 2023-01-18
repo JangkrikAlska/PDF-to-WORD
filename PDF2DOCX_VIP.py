@@ -11,8 +11,7 @@ from tkinter import *
 from tkinter import messagebox, filedialog
 from pdf2docx import parse
 import keyboard
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+from datetime import datetime
 
 root = Tk()
 root.resizable(False, False)

